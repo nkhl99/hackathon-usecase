@@ -1,4 +1,4 @@
-name: Docker Build Test
+name: My CI
 
 on:
   push:
@@ -13,17 +13,38 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Build Docker image
+      # -------------------------
+      # Build Appointment Service
+      # -------------------------
+      - name: Build appointment-service image
         run: |
           docker build -t appointment-service:latest application-service
 
-      - name: Run container (health check)
+      - name: Run appointment-service (health check)
         run: |
-          docker run -d -p 3001:3001 --name test-app appointment-service:latest
+          docker run -d -p 3001:3001 --name appointment-test appointment-service:latest
           sleep 5
           curl http://localhost:3001/health
 
-      - name: Cleanup
+      - name: Cleanup appointment-service
         if: always()
         run: |
-          docker rm -f test-app || true
+          docker rm -f appointment-test || true
+
+      # -------------------------
+      # Build Patient Service
+      # -------------------------
+      - name: Build patient-service image
+        run: |
+          docker build -t patient-service:latest patient-service
+
+      - name: Run patient-service (health check)
+        run: |
+          docker run -d -p 3000:3000 --name patient-test patient-service:latest
+          sleep 5
+          curl http://localhost:3000/health
+
+      - name: Cleanup patient-service
+        if: always()
+        run: |
+          docker rm -f patient-test || true
