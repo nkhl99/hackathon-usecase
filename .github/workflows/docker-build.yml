@@ -15,11 +15,15 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -f application-service/Dockerfile -t appointment-service:latest .
+          docker build -t appointment-service:latest application-service
 
-
-      - name: Run container (basic health check)
+      - name: Run container (health check)
         run: |
           docker run -d -p 3001:3001 --name test-app appointment-service:latest
           sleep 5
           curl http://localhost:3001/health
+
+      - name: Cleanup
+        if: always()
+        run: |
+          docker rm -f test-app || true
