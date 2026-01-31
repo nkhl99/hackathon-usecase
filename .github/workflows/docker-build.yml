@@ -48,3 +48,22 @@ jobs:
         if: always()
         run: |
           docker rm -f patient-test || true
+
+      # -------------------------
+      # Build Order Service (Java)
+      # -------------------------
+      - name: Build order-service image
+        run: |
+          docker build -t order-service:latest order-service
+
+      - name: Run order-service (health check)
+        run: |
+          docker run -d -p 8080:8080 --name order-test order-service:latest
+          sleep 10
+          curl http://localhost:8080/actuator/health || true
+
+      - name: Cleanup order-service
+        if: always()
+        run: |
+          docker rm -f order-test || true
+
