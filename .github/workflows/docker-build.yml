@@ -15,7 +15,8 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t appointment-service:latest application-service .
+          docker build -f application-service/Dockerfile -t appointment-service:latest .
+
 
       - name: Run container (basic health check)
         run: |
