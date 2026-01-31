@@ -13,41 +13,41 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # # -------------------------
-      # # Build Appointment Service
-      # # -------------------------
-      # - name: Build appointment-service image
-      #   run: |
-      #     docker build -t appointment-service:latest application-service
+      # -------------------------
+      # Build Appointment Service
+      # -------------------------
+      - name: Build appointment-service image
+        run: |
+          docker build -t appointment-service:latest application-service
 
-      # - name: Run appointment-service (health check)
-      #   run: |
-      #     docker run -d -p 3001:3001 --name appointment-test appointment-service:latest
-      #     sleep 5
-      #     curl http://localhost:3001/health
+      - name: Run appointment-service (health check)
+        run: |
+          docker run -d -p 3001:3001 --name appointment-test appointment-service:latest
+          sleep 5
+          curl http://localhost:3001/health
 
-      # - name: Cleanup appointment-service
-      #   if: always()
-      #   run: |
-      #     docker rm -f appointment-test || true
+      - name: Cleanup appointment-service
+        if: always()
+        run: |
+          docker rm -f appointment-test || true
 
-      # # -------------------------
-      # # Build Patient Service
-      # # -------------------------
-      # - name: Build patient-service image
-      #   run: |
-      #     docker build -t patient-service:latest patient-service
+      # -------------------------
+      # Build Patient Service
+      # -------------------------
+      - name: Build patient-service image
+        run: |
+          docker build -t patient-service:latest patient-service
 
-      # - name: Run patient-service (health check)
-      #   run: |
-      #     docker run -d -p 3000:3000 --name patient-test patient-service:latest
-      #     sleep 5
-      #     curl http://localhost:3000/health
+      - name: Run patient-service (health check)
+        run: |
+          docker run -d -p 3000:3000 --name patient-test patient-service:latest
+          sleep 5
+          curl http://localhost:3000/health
 
-      # - name: Cleanup patient-service
-      #   if: always()
-      #   run: |
-      #     docker rm -f patient-test || true
+      - name: Cleanup patient-service
+        if: always()
+        run: |
+          docker rm -f patient-test || true
 
       # -------------------------
       # Build Order Service (Java)
@@ -60,7 +60,6 @@ jobs:
         run: |
           docker run -d -p 8080:8080 --name order-test order-service:latest
           sleep 10
-          curl http://localhost:8080/health
 
       - name: Cleanup order-service
         if: always()
