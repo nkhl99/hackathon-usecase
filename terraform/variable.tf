@@ -1,8 +1,7 @@
 variable "project_id" {
   type        = string
   description = "GCP project ID"
-#   default = "project-ccdedfce-e763-469f-90f"
-default = "steel-magpie-486007-d6"
+  default = "steel-magpie-486007-d6"
 }
 
 variable "region" {

@@ -1,0 +1,49 @@
+name: Deploy to GKE
+
+on:
+  push:
+    branches:
+      - main 
+
+env:
+  PROJECT_ID: your-gcp-project
+  GKE_CLUSTER: hackathon-cluster
+  GKE_ZONE: asia-south1-a
+  K8S_DIR: k8s/base 
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 2️⃣ Authenticate to GCP using Workload Identity
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v1
+        with:
+          workload_identity_provider: projects/PROJECT_NUMBER/locations/global/workloadIdentityPools/POOL/providers/PROVIDER
+          service_account: gcp-sa@${{ env.PROJECT_ID }}.iam.gserviceaccount.com
+
+      # 3️⃣ Get GKE credentials
+      - name: Get GKE Credentials
+        uses: google-github-actions/get-gke-credentials@v1
+        with:
+          cluster_name: ${{ env.GKE_CLUSTER }}
+          location: ${{ env.GKE_ZONE }}
+          project_id: ${{ env.PROJECT_ID }}
+
+      # 4️⃣ Deploy Kustomize
+      - name: Deploy Kustomize to GKE
+        run: |
+          kubectl apply -k ${{ env.K8S_DIR }}
+
+      # 5️⃣ Optional: Verify rollout
+      - name: Verify Deployments
+        run: |
+          kubectl get deployments
+          kubectl get svc
+          kubectl get ingress
+  
